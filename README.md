@@ -1,7 +1,8 @@
 # @cib/frontend-preset
 
-Shared Vite, Vitest and ESLint configuration for CIB Vue 3 frontends, plus a `cib-frontend check`
-command that verifies a project follows the CIB npm script standard (DEVOPS-818).
+Shared Vite, Vitest and ESLint configuration for CIB Vue 3 frontends, plus a `cib-frontend` CLI:
+`check` verifies a project follows the CIB npm script standard (DEVOPS-818), `sbom` writes a
+CycloneDX SBOM of its production dependencies.
 
 One devDependency replaces the copy-pasted `vitest.config.js`, `eslint.config.js` and the tool
 versions in every project. Updating ESLint or Vitest becomes one version bump of this package.
@@ -17,7 +18,7 @@ versions in every project. Updating ESLint or Vitest becomes one version bump of
 
 The report paths are set by the preset, so `test:unit` is just `vitest run --coverage`.
 
-Versions owned by the preset: eslint 10.8.1, @eslint/js 10.0.1, eslint-plugin-vue 10.10.0,
+Versions owned by the preset: eslint 10.8.1, @cyclonedx/cyclonedx-npm 6.0.1, @eslint/js 10.0.1, eslint-plugin-vue 10.10.0,
 eslint-plugin-vuejs-accessibility 2.6.0, @vitest/eslint-plugin 1.6.27, vitest 4.1.11,
 @vitest/coverage-istanbul 4.1.11, jsdom 29.1.0, eslint-formatter-junit 9.0.1.
 `vite` stays a peer dependency (6, 7 or 8), so each project picks its Vite version.
@@ -96,6 +97,43 @@ Exits 1 when:
 
 Not using `@cib/frontend-preset` yet is only a warning. `--json` prints machine-readable findings
 for a cross-repo inventory.
+
+## `cib-frontend sbom`
+
+```bash
+npx cib-frontend sbom [dir] [--output-dir target] [--name frontend-bom] [--format json,xml] [--include-dev]
+```
+
+Writes a CycloneDX SBOM (spec 1.6) of the project's production dependencies with
+[`@cyclonedx/cyclonedx-npm`](https://github.com/CycloneDX/cyclonedx-node-npm), pinned by the preset.
+The defaults produce `target/frontend-bom.json` and `target/frontend-bom.xml`, the same files as the
+`generate-frontend-sbom` Maven profile in cibseven-webclient. Run it after `npm ci`, because it reads
+`node_modules`.
+
+In a Maven + npm repository, add a script and let the profile call it instead of two
+`npm exec --yes -- @cyclonedx/cyclonedx-npm@...` executions:
+
+```json
+"sbom": "cib-frontend sbom"
+```
+
+```xml
+<execution>
+  <id>generate-frontend-sbom</id>
+  <goals><goal>npm</goal></goals>
+  <phase>prepare-package</phase>
+  <configuration>
+    <arguments>run sbom</arguments>
+  </configuration>
+</execution>
+```
+
+This removes the download at build time, and the tool version gets the same Renovate and
+`min-release-age` treatment as every other dependency. The `build-helper-maven-plugin` execution that
+attaches the two files stays unchanged.
+
+Standalone npm projects on `standardNPMPipeline` do not need this for Dependency-Track: the pipeline
+already generates its own `bom.xml` in the SAST stage.
 
 ## Development
 

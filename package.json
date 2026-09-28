@@ -1,6 +1,6 @@
 {
   "name": "@cib/frontend-preset",
-  "version": "0.1.0-dev.0",
+  "version": "0.1.0-dev.1",
   "description": "Shared Vite, Vitest and ESLint configuration for CIB Vue 3 frontends",
   "type": "module",
   "license": "Apache-2.0",
@@ -28,6 +28,7 @@
     "test": "vitest run",
     "test:unit": "vitest run --coverage",
     "check": "node src/cli.js check",
+    "sbom": "node src/cli.js sbom",
     "build": "node -e \"require('fs').mkdirSync('dist',{recursive:true})\" && npm pack --pack-destination dist",
     "clean": "node -e \"for (const d of ['dist','target']) require('fs').rmSync(d,{recursive:true,force:true})\""
   },
@@ -35,6 +36,7 @@
     "vite": "^6.0.0 || ^7.0.0 || ^8.0.0"
   },
   "dependencies": {
+    "@cyclonedx/cyclonedx-npm": "6.0.1",
     "@eslint/js": "10.0.1",
     "@vitest/coverage-istanbul": "4.1.11",
     "@vitest/eslint-plugin": "1.6.27",
