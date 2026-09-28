@@ -1,0 +1,12 @@
+.idea
+*.iml
+.vscode/
+.claude/
+.DS_Store
+
+/node_modules/
+/dist/
+/target/
+/coverage/
+lint-results.xml
+*.log

@@ -1,0 +1,54 @@
+{
+  "name": "@cib/frontend-preset",
+  "version": "0.1.0-dev.0",
+  "description": "Shared Vite, Vitest and ESLint configuration for CIB Vue 3 frontends",
+  "type": "module",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cibsoftware/cib-frontend-preset.git"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "exports": {
+    "./vite": "./src/vite.js",
+    "./vitest": "./src/vitest.js",
+    "./eslint": "./src/eslint.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "cib-frontend": "./src/cli.js"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:ci": "eslint . --format junit --output-file lint-results.xml",
+    "test": "vitest run",
+    "test:unit": "vitest run --coverage",
+    "check": "node src/cli.js check",
+    "build": "node -e \"require('fs').mkdirSync('dist',{recursive:true})\" && npm pack --pack-destination dist",
+    "clean": "node -e \"for (const d of ['dist','target']) require('fs').rmSync(d,{recursive:true,force:true})\""
+  },
+  "peerDependencies": {
+    "vite": "^6.0.0 || ^7.0.0 || ^8.0.0"
+  },
+  "dependencies": {
+    "@eslint/js": "10.0.1",
+    "@vitest/coverage-istanbul": "4.1.11",
+    "@vitest/eslint-plugin": "1.6.27",
+    "eslint": "10.8.1",
+    "eslint-formatter-junit": "9.0.1",
+    "eslint-plugin-vue": "10.10.0",
+    "eslint-plugin-vuejs-accessibility": "2.6.0",
+    "jsdom": "29.1.0",
+    "vitest": "4.1.11"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.6",
+    "@vue/test-utils": "2.4.9",
+    "vite": "6.4.3",
+    "vue": "3.5.33"
+  }
+}
